@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1264e8">
+  <meta name="description" content="Daily Hisab by AK - simple private daily expense tracker">
+  <link id="manifestLink" rel="manifest" href="manifest.json">
+  <link id="faviconLink" rel="icon" href="icon.svg" type="image/svg+xml">
+  <link id="appleIconLink" rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>Daily Hisab by AK</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" id="brandIcon">₹</div>
+      <div>
+        <h1 id="brandName">Daily Hisab by AK</h1>
+        <p id="brandTagline">Track today. Know your hisab.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="langToggle" class="icon-btn lang-btn" data-i18n-aria="aria_language" aria-label="Language">ગુ</button>
+      <button id="installBtn" class="icon-btn hidden" data-i18n-aria="aria_install" aria-label="Install app">⇩</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="page-title">
+        <div><h2 data-i18n="today">Today</h2><p id="todayLabel"></p></div>
+        <button class="small-btn" data-action="go-add" data-i18n="btn_add">+ Add</button>
+      </div>
+
+      <div class="total-card">
+        <span data-i18n="todays_expense">Today's Expense</span>
+        <strong id="todayTotal">₹0</strong>
+        <div class="total-meta"><span id="todayCount">0 entries</span><span id="monthTotalMini">This month ₹0</span></div>
+      </div>
+
+      <div class="section-head"><h3 data-i18n="quick_add">Quick Add</h3></div>
+      <div class="quick-grid">
+        <button data-quick="Milk">🥛<span data-i18n="q_Milk">Milk</span></button>
+        <button data-quick="Lunch">🍱<span data-i18n="q_Lunch">Lunch</span></button>
+        <button data-quick="Food">🍛<span data-i18n="q_Food">Food</span></button>
+        <button data-quick="Vegetables">🥦<span data-i18n="q_Vegetables">Vegetables</span></button>
+        <button data-quick="Petrol">⛽<span data-i18n="q_Petrol">Petrol</span></button>
+        <button data-quick="Other">•••<span data-i18n="q_Other">Other</span></button>
+      </div>
+
+      <div class="section-head"><h3 data-i18n="todays_expenses">Today's Expenses</h3><button class="link-btn" data-action="go-history" data-i18n="view_all">View all</button></div>
+      <div id="todayList" class="list"></div>
+      <div id="todayEmpty" class="empty hidden"><span data-i18n="no_expenses_today">No expenses today.</span><br><button class="primary-btn" data-action="go-add" data-i18n="add_first">Add your first expense</button></div>
+    </section>
+
+    <section id="add" class="screen">
+      <div class="page-title"><div><h2 id="formTitle">Add Expense</h2><p data-i18n="form_sub">Enter it in a few seconds.</p></div></div>
+      <form id="expenseForm" class="card form-card">
+        <input type="hidden" id="editId">
+        <label><span data-i18n="amount">Amount (₹)</span>
+          <input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0" required>
+        </label>
+        <label><span data-i18n="what_spent">What did you spend on?</span>
+          <input id="description" maxlength="80" data-i18n-ph="ph_description" placeholder="e.g. Milk, Lunch, Petrol" required>
+        </label>
+
+        <label data-i18n="category">Category</label>
+        <div id="categoryGrid" class="category-grid"></div>
+
+        <div class="two-col">
+          <label><span data-i18n="date">Date</span><input id="date" type="date" required></label>
+          <label><span data-i18n="time">Time</span><input id="time" type="time" required></label>
+        </div>
+
+        <label><span data-i18n="note">Note</span> <span class="muted" data-i18n="optional">(optional)</span>
+          <textarea id="note" maxlength="200" data-i18n-ph="ph_note" placeholder="e.g. From nearby shop"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-btn hidden" id="cancelEdit" data-i18n="cancel">Cancel</button>
+          <button type="submit" class="primary-btn" id="saveBtn">Save Expense</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="overview" class="screen">
+      <div class="page-title"><div><h2 data-i18n="overview">Overview</h2><p data-i18n="overview_sub">See where your money went.</p></div></div>
+      <div class="period-tabs">
+        <button class="period active" data-period="month" data-i18n="this_month">This Month</button>
+        <button class="period" data-period="week" data-i18n="this_week">This Week</button>
+        <button class="period" data-period="today" data-i18n="today">Today</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat"><span data-i18n="total">Total</span><strong id="overviewTotal">₹0</strong></div>
+        <div class="stat"><span data-i18n="entries">Entries</span><strong id="overviewCount">0</strong></div>
+        <div class="stat"><span data-i18n="average">Average</span><strong id="overviewAverage">₹0</strong></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h3 data-i18n="by_category">By Category</h3></div>
+        <div id="categoryBreakdown"></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h3 data-i18n="recent_expenses">Recent Expenses</h3></div>
+        <div id="overviewRecent" class="list"></div>
+      </div>
+    </section>
+
+    <section id="history" class="screen">
+      <div class="page-title"><div><h2 data-i18n="history">History</h2><p data-i18n="history_sub">Search and manage your expenses.</p></div></div>
+      <div class="search-row">
+        <input id="search" type="search" data-i18n-ph="ph_search" placeholder="Search expenses...">
+        <select id="filterCategory"><option value="">All categories</option></select>
+      </div>
+      <div class="date-row">
+        <input id="fromDate" type="date" data-i18n-aria="aria_from" aria-label="From date">
+        <span data-i18n="to">to</span>
+        <input id="toDate" type="date" data-i18n-aria="aria_to" aria-label="To date">
+        <button id="clearFilters" class="small-btn" data-i18n="clear">Clear</button>
+      </div>
+      <div class="history-summary"><span id="historyCount">0 entries</span><strong id="historyTotal">₹0</strong></div>
+      <div id="historyList" class="list"></div>
+      <div id="historyEmpty" class="empty hidden" data-i18n="no_matching">No matching expenses.</div>
+    </section>
+
+    <section id="excel" class="screen">
+      <div class="page-title"><div><h2 data-i18n="excel_title">Excel Export</h2><p data-i18n="excel_sub">Download a monthly report.</p></div></div>
+      <div class="card export-card">
+        <div class="excel-icon">X</div>
+        <h3 data-i18n="monthly_report">Monthly Expense Report</h3>
+        <p data-i18n="excel_desc">Choose a month and download a CSV file that opens directly in Microsoft Excel, Google Sheets, or LibreOffice.</p>
+        <label><span data-i18n="month">Month</span><input id="exportMonth" type="month"></label>
+        <button id="exportBtn" class="primary-btn" data-i18n="download_report">⇩ Download Excel Report</button>
+      </div>
+      <div class="card">
+        <h3 data-i18n="backup_restore">Backup & Restore</h3>
+        <p class="muted" data-i18n="backup_desc">Keep a backup because your expenses are stored locally on this device.</p>
+        <div class="backup-actions">
+          <button id="backupBtn" class="secondary-btn" data-i18n="backup_data">Backup Data</button>
+          <label class="file-btn secondary-btn"><span data-i18n="restore_data">Restore Data</span><input id="restoreInput" type="file" accept=".json" hidden></label>
+        </div>
+        <p id="backupStatus" class="status-text"></p>
+      </div>
+      <div class="privacy-note" data-i18n="privacy_note">🔒 Your expense records stay in this browser. This app does not require an account or send expenses to a server.</div>
+    </section>
+
+    <section id="settings" class="screen">
+      <div class="page-title"><div><h2 data-i18n="settings">Settings</h2><p data-i18n="settings_sub">Change language, name and logo.</p></div></div>
+
+      <div class="card">
+        <div class="section-head tight"><h3 data-i18n="language">Language</h3></div>
+        <div class="period-tabs lang-tabs">
+          <button class="period" data-lang="en">English</button>
+          <button class="period" data-lang="gu">ગુજરાતી</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head tight"><h3 data-i18n="app_logo">App Logo</h3></div>
+        <p class="muted small" data-i18n="logo_help">Upload your own logo (PNG/JPG). It shows in the header, as the browser icon, and as the app icon when installed.</p>
+        <div class="logo-row">
+          <div class="logo-preview" id="logoPreview">₹</div>
+          <div class="logo-btns">
+            <label class="primary-btn file-label"><span data-i18n="upload_logo">Upload Logo</span><input id="logoInput" type="file" accept="image/*" hidden></label>
+            <button id="logoReset" type="button" class="secondary-btn" data-i18n="reset_logo">Use Default Logo</button>
+          </div>
+        </div>
+
+        <div class="settings-form">
+          <label><span data-i18n="logo_text">Logo symbol (text or emoji, used when no image)</span>
+            <input id="logoText" maxlength="3" placeholder="₹">
+          </label>
+          <label><span data-i18n="app_name">App name</span>
+            <input id="appNameInput" maxlength="40" data-i18n-ph="ph_default_blank" placeholder="Leave blank for default">
+          </label>
+          <label><span data-i18n="tagline_label">Tagline</span>
+            <input id="taglineInput" maxlength="60" data-i18n-ph="ph_default_blank" placeholder="Leave blank for default">
+          </label>
+          <button id="saveSettings" type="button" class="primary-btn" data-i18n="save_settings">Save Changes</button>
+        </div>
+      </div>
+
+      <div class="privacy-note" data-i18n="free_note">✅ Free app. No ads, no account, works offline. Your data stays on your device.</div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-item active" data-nav="home"><span>⌂</span><b data-i18n="nav_home">Home</b></button>
+    <button class="nav-item" data-nav="overview"><span>▥</span><b data-i18n="nav_overview">Overview</b></button>
+    <button class="nav-item" data-nav="history"><span>◷</span><b data-i18n="nav_history">History</b></button>
+    <button class="nav-item" data-nav="excel"><span>▣</span><b data-i18n="nav_excel">Excel</b></button>
+    <button class="nav-item" data-nav="settings"><span>⚙</span><b data-i18n="nav_settings">Settings</b></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
